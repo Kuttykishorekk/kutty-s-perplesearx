@@ -28,7 +28,7 @@ COPY drizzle ./drizzle
 COPY --from=builder /home/perplexica/migrator/build ./build
 COPY --from=builder /home/perplexica/migrator/index.js ./migrate.js
 
-COPY config.toml .
+# The "COPY config.toml ." line has been removed.
 
 EXPOSE 3000
 
