@@ -28,8 +28,10 @@ COPY drizzle ./drizzle
 COPY --from=builder /home/perplexica/migrator/build ./build
 COPY --from=builder /home/perplexica/migrator/index.js ./migrate.js
 
-RUN mkdir /home/perplexica/uploads
+COPY config.toml .
 
-COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
-CMD ["./entrypoint.sh"]
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["node", "server.js"]
