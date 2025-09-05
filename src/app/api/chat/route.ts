@@ -14,6 +14,7 @@ import type { Embeddings } from '@langchain/core/embeddings';
 import { searchHandlers } from '@/lib/search';
 import { createCustomModel, validateCustomModel } from '@/lib/providers/customModels';
 
+
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
