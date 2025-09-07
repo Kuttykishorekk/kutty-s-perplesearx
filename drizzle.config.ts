@@ -1,11 +1,11 @@
-// Perplefina/drizzle.config.ts
 import { defineConfig } from 'drizzle-kit';
+import path from 'path';
 
 export default defineConfig({
-  dialect: 'postgresql', // Changed from 'sqlite'
+  dialect: 'sqlite',
   schema: './src/lib/db/schema.ts',
   out: './drizzle',
   dbCredentials: {
-    url: process.env.DATABASE_URL!, // Use the environment variable
+    url: path.join(process.cwd(), 'data', 'db.sqlite'),
   },
 });

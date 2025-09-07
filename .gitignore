@@ -37,5 +37,5 @@ Thumbs.db
 # Db
 db.sqlite
 
-
+.env
 certificates

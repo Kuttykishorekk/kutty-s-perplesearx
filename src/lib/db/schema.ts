@@ -1,35 +1,28 @@
-// src/lib/db/schema.ts
+import { sql } from 'drizzle-orm';
+import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-import {
-  pgTable,
-  text,
-  serial,
-  varchar,
-  timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
-
-// Renamed from 'chatsSchema' to 'chats' to match your API route's import.
-// Removed the redundant uniqueIndex.
-export const chats = pgTable(
-  'chats',
-  {
-    id: serial('id').primaryKey(),
-    title: varchar('title', { length: 256 }).notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  }
-);
-
-// Renamed from 'messagesSchema' to 'messages'.
-export const messages = pgTable('messages', {
-  id: serial('id').primaryKey(),
-  // Updated the reference to point to the renamed 'chats' variable.
-  chatId: integer('chat_id')
-    .notNull()
-    .references(() => chats.id, { onDelete: 'cascade' }),
+export const messages = sqliteTable('messages', {
+  id: integer('id').primaryKey(),
   content: text('content').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  role: text('role', { enum: ['user', 'assistant'] })
-    .notNull()
-    .default('assistant'),
+  chatId: text('chatId').notNull(),
+  messageId: text('messageId').notNull(),
+  role: text('type', { enum: ['assistant', 'user'] }),
+  metadata: text('metadata', {
+    mode: 'json',
+  }),
+});
+
+interface File {
+  name: string;
+  fileId: string;
+}
+
+export const chats = sqliteTable('chats', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  createdAt: text('createdAt').notNull(),
+  focusMode: text('focusMode').notNull(),
+  files: text('files', { mode: 'json' })
+    .$type<File[]>()
+    .default(sql`'[]'`),
 });

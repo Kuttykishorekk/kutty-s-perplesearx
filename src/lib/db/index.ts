@@ -1,13 +1,12 @@
-// Perplefina/src/lib/db/index.ts
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
 import * as schema from './schema';
+import path from 'path';
 
-// This tells your app to connect to the DATABASE_URL from Vercel
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+const DATA_DIR = process.env.DATA_DIR || process.cwd();
+const sqlite = new Database(path.join(DATA_DIR, './data/db.sqlite'));
+const db = drizzle(sqlite, {
+  schema: schema,
 });
-
-const db = drizzle(pool, { schema });
 
 export default db;
