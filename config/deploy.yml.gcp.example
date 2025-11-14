@@ -1,0 +1,74 @@
+# Perplefina - AI-powered Financial Search Engine
+# GCP Configuration Example
+# Copy this to deploy.yml and update with your values
+
+service: perplefina
+image: kutty/perplefina
+
+# Replace with your GCP VM External IP
+servers:
+  web:
+    - 34.123.45.67  # YOUR_GCP_VM_EXTERNAL_IP
+
+# SSL and domain configuration
+# Option 1: With domain (recommended)
+proxy:
+  ssl: true
+  host: perplefina.your-domain.com  # Your domain
+  app_port: 3000
+
+# Option 2: Without domain (use IP)
+# proxy:
+#   ssl: false
+#   host: 34.123.45.67  # Your GCP VM IP
+#   app_port: 3000
+
+# Docker registry configuration
+registry:
+  username: kutty  # Your Docker Hub username
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Builder configuration
+builder:
+  arch: amd64
+  dockerfile: app.dockerfile
+  context: .
+
+# Environment variables
+env:
+  clear:
+    SEARXNG_API_URL: http://searxng:8080
+    DATA_DIR: /home/perplexica
+    NODE_ENV: production
+    PORT: 3000
+  secret:
+    # Uncomment and add to .kamal/secrets if needed
+    # - OPENAI_API_KEY
+    # - ANTHROPIC_API_KEY
+
+# Persistent volumes
+volumes:
+  - "perplefina_data:/home/perplexica/data"
+  - "perplefina_uploads:/home/perplexica/uploads"
+
+# SearxNG accessory
+accessories:
+  searxng:
+    image: searxng/searxng:latest
+    host: 34.123.45.67  # Same as servers.web
+    port: 4000
+    options: --publish "4000:8080"
+    env:
+      clear:
+        SEARXNG_HOSTNAME: searxng.your-domain.com
+    files:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+      - ./searxng/finance-engines.yml:/etc/searxng/finance-engines.yml:ro
+    directories:
+      - searxng_data:/etc/searxng
+
+# GCP SSH Configuration (uncomment if needed)
+# ssh:
+#   user: your-username  # Your GCP username (usually your email)
+#   key: ~/.ssh/gcp_perplefina  # Path to your SSH key
